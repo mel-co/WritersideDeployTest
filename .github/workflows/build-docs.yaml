@@ -92,14 +92,14 @@ jobs:
           shopt -s dotglob
           mv "$first_dir"/* "$unzip_dir/"
      
+          rmdir "$first_dir"
           
           SRC_DIR="$GITHUB_WORKSPACE/docs/Writerside/images"  # change to your folder
-
-          # Find and copy all image files from the specific folder
-          find "$SRC_DIR" -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" -o -iname "*.svg" \) -exec cp {} "$first_dir" \;
-
-          echo "All images from $SRC_DIR copied to $first_dir"
           
+          # Find and copy all image files from the specific folder
+          find "$SRC_DIR" -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" -o -iname "*.svg" \) -exec cp {} "$unzip_dir" \;
+
+          echo "All images from $SRC_DIR copied to $unzip_dir"
           
           # Change the index
           pathPart=$(basename "$first_dir")
