@@ -97,7 +97,7 @@ jobs:
           
           # Change the index
           pathPart=$(basename "$first_dir")
-          INDEX_FILE="$UNZIP_DIR/index.html"
+          INDEX_FILE="$unzip_dir/index.html"
           
           sed -i "s|$pathPart/||g" "$INDEX_FILE"
           
