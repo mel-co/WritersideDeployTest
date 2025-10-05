@@ -66,6 +66,16 @@ jobs:
 
           echo "Processing ZIP: $ZIP_FILE"
 
+          # Find the ZIP that starts with webHelp
+          ZIP_FILE=$(find artifacts -type f -name "webHelp*.zip" | head -n 1)
+
+          if [ -z "$ZIP_FILE" ]; then
+            echo "No ZIP file found starting with webHelp"
+            exit 1
+          fi
+
+          echo "Processing ZIP: $ZIP_FILE"
+
           # Create a temporary folder for extraction
           TMP_DIR=$(mktemp -d)
           unzip -qq "$ZIP_FILE" -d "$TMP_DIR"
@@ -84,14 +94,15 @@ jobs:
           mv "$FIRST_DIR"/* "$TMP_DIR"/
           rmdir "$FIRST_DIR"
 
-          # Create a temporary ZIP in the workspace
-          TEMP_ZIP="$GITHUB_WORKSPACE/$(basename "$ZIP_FILE")"
-
-          # Zip contents from inside TMP_DIR, using relative paths
+          # Create a temporary ZIP
+          TEMP_ZIP=$(mktemp --suffix=.zip)
           cd "$TMP_DIR"
           zip -r -qq "$TEMP_ZIP" ./*
 
-          echo "Flattened ZIP saved as $TEMP_ZIP"
+          # Replace the original ZIP with the flattened one
+          mv "$TEMP_ZIP" "$GITHUB_WORKSPACE/$ZIP_FILE"
+
+          echo "Flattened ZIP overwrote original: $ZIP_FILE"
 
       - name: Save artifact with build results
         uses: actions/upload-artifact@v4
