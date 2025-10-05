@@ -56,16 +56,41 @@ jobs:
 
       - name: Flatten folder structure
         run: |
-          echo "Looking for artifacts!"
-          find artifacts
-          PARENT_FOLDER=$(dirname "$FOLDER_TO_FLATTEN")
-          # Copy all contents to the parent folder
-          cp -a "$FOLDER_TO_FLATTEN/." "$PARENT_FOLDER/"
+          # Find the ZIP that starts with webHelp
+          ZIP_FILE=$(find artifacts -type f -name "webHelp*.zip" | head -n 1)
 
-          # Remove the original folder
-          rm -rf "$FOLDER_TO_FLATTEN"
-        env:
-          FOLDER_TO_FLATTEN: ${{ env.FOLDER_TO_FLATTEN }}
+          if [ -z "$ZIP_FILE" ]; then
+            echo "No ZIP file found starting with webHelp"
+            exit 1
+          fi
+
+          echo "Processing ZIP: $ZIP_FILE"
+
+          # Create a temporary folder
+          TMP_DIR=$(mktemp -d)
+
+          # Extract the ZIP into temp folder
+          unzip -qq "$ZIP_FILE" -d "$TMP_DIR"
+
+          # Find the first directory inside the extracted folder
+          FIRST_DIR=$(find "$TMP_DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+
+          if [ -z "$FIRST_DIR" ]; then
+            echo "No directory found inside ZIP"
+            exit 1
+          fi
+
+          echo "Flattening directory: $FIRST_DIR"
+
+          # Move all contents to the root of TMP_DIR
+          mv "$FIRST_DIR"/* "$TMP_DIR"/
+
+          # Remove the original directory
+          rmdir "$FIRST_DIR"
+
+          # Repack the ZIP (overwrite original)
+          cd "$TMP_DIR"
+          zip -r -qq "$GITHUB_WORKSPACE/$ZIP_FILE" ./*
 
       - name: Save artifact with build results
         uses: actions/upload-artifact@v4
