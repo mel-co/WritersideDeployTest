@@ -13,7 +13,7 @@ env:
   INSTANCE: 'Writerside/all'
   DOCKER_VERSION: '2025.04.8412'
   IS_GROUP: 'true'  # Uncomment to build a group
-
+  FOLDER_TO_FLATTEN: 'artifacts/WritersideDeployTest'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -45,6 +45,19 @@ jobs:
           echo "ALGOLIA_ARTIFACT=$ALGOLIA_ARTIFACT" >> $GITHUB_ENV
           echo "artifact=$ARTIFACT" >> $GITHUB_OUTPUT
           echo "algolia_artifact=$ALGOLIA_ARTIFACT" >> $GITHUB_OUTPUT
+
+      - name: Flatten folder structure
+        run: |
+          PARENT_FOLDER=$(dirname "$FOLDER_TO_FLATTEN")
+
+          # Copy all contents to the parent folder
+          cp -a "$FOLDER_TO_FLATTEN/." "$PARENT_FOLDER/"
+
+          # Remove the original folder
+          rm -rf "$FOLDER_TO_FLATTEN"
+        env:
+          FOLDER_TO_FLATTEN: ${{ env.FOLDER_TO_FLATTEN }}
+
 
       - name: Build docs using Writerside Docker builder
         uses: JetBrains/writerside-github-action@v4
