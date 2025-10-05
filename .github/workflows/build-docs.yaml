@@ -66,10 +66,8 @@ jobs:
 
           echo "Processing ZIP: $ZIP_FILE"
 
-          # Create a temporary folder
+          # Create a temporary folder for extraction
           TMP_DIR=$(mktemp -d)
-
-          # Extract the ZIP into temp folder
           unzip -qq "$ZIP_FILE" -d "$TMP_DIR"
 
           # Find the first directory inside the extracted folder
@@ -84,17 +82,16 @@ jobs:
 
           # Move all contents to the root of TMP_DIR
           mv "$FIRST_DIR"/* "$TMP_DIR"/
-
-          # Remove the original directory
           rmdir "$FIRST_DIR"
 
-          # Create a new ZIP in a temporary file
-          TEMP_ZIP=$(mktemp --suffix=.zip)
+          # Create a temporary ZIP in the workspace
+          TEMP_ZIP="$GITHUB_WORKSPACE/$(basename "$ZIP_FILE")"
+
+          # Zip contents from inside TMP_DIR, using relative paths
           cd "$TMP_DIR"
           zip -r -qq "$TEMP_ZIP" ./*
 
-          # Replace the original ZIP with the new flattened ZIP
-          mv "$TEMP_ZIP" "$GITHUB_WORKSPACE/$ZIP_FILE"
+          echo "Flattened ZIP saved as $TEMP_ZIP"
 
       - name: Save artifact with build results
         uses: actions/upload-artifact@v4
