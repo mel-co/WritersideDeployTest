@@ -97,7 +97,7 @@ jobs:
               [ -d "$dir" ] || continue  # skip if not a directory
               TARGET="$dir/$pathPart"
               echo "Processing folder: $TARGET"
-              cp -a "$TARGET/." "$unzip_dir/"
+              mv "$TARGET"/* "$unzip_dir/"
 
               # Remove the original subfolder
               rm -rf "$TARGET"
