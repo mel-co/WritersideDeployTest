@@ -91,18 +91,20 @@ jobs:
           # shopt -s dotglob allows '*' to match dotfiles (like .gitignore)
           shopt -s dotglob
           mv "$first_dir"/* "$unzip_dir/"
-      
-          find .
-      
+     
           # Remove the now-empty subdirectory
           rmdir "$first_dir"
+          
+          # Change the index
+          pathPart=$(basename "$first_dir")
+          INDEX_FILE="$UNZIP_DIR/index.html"
+          
+          sed -i "s|$pathPart/||g" "$INDEX_FILE"
           
           echo "Creating new zip archive..."
           # Create the new zip file by zipping the contents of the temporary directory.
           # We use the original zip's filename. The 'cd' command ensures the paths inside the zip are relative to the root.
-          (cd "$unzip_dir" && zip -r "../${zip_file##*/}" .)
-          
-          find .
+          (cd "$unzip_dir" && zip -qr "../${zip_file##*/}" .)
           
           rm "./artifacts/${zip_file##*/}"
           
