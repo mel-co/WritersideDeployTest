@@ -3,7 +3,20 @@
 <buildprofiles xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/build-profiles.xsd"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <variables></variables>
+     <variables>
+        <primary-color>
+            emerald
+        </primary-color>
+        <color-preset>
+            soft
+        </color-preset>
+        <header-logo>
+            ArcanumForeColor.png
+        </header-logo>
+        <custom-favicons>
+            ArcanumSimplified.ico
+        </custom-favicons>
+    </variables>
     <build-profile instance="u">
         <variables>
             <noindex-content>true</noindex-content>
