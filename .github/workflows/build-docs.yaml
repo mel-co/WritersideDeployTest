@@ -6,11 +6,9 @@ on:
   workflow_dispatch:
 
 env:
-  INSTANCE: |
-    docs/Writerside/u
-    docs/Writerside/d
+  INSTANCE: 'docs/Writerside/u'
   DOCKER_VERSION: '2025.04.8412'
-  IS_GROUP: 'true'  # Uncomment to build a group
+  # IS_GROUP: 'true'  # Uncomment to build a group
 
 jobs:
   build:
