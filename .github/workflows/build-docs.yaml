@@ -104,9 +104,9 @@ jobs:
           
           find .
           
-          rm "/artifacts/${zip_file##*/}"
+          rm "./artifacts/${zip_file##*/}"
           
-          mv "../${zip_file##*/}" "/artifacts"
+          mv "./${zip_file##*/}" "./artifacts"
           
           echo "Successfully re-zipped artifact to: $zip_file"
       
