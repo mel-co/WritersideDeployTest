@@ -56,67 +56,56 @@ jobs:
 
       - name: Flatten folder structure
         run: |
-          # Exit immediately if a command fails
+          # Exit immediately if a command exits with a non-zero status.
           set -e
       
-          # Find the first zip file in the current directory and subdirectories
-          original_zip_path=$(find . -name "*.zip" | head -n 1)
+          # Find the first zip file. The '|| true' prevents the script from failing if no files are found yet.
+          zip_file=$(find . -name "*.zip" | head -n 1)
       
-          if [[ -z "$original_zip_path" ]]; then
+          if [[ -z "$zip_file" ]]; then
             echo "Error: No zip file found to process."
             exit 1
           fi
       
-          echo "Processing Zip File: $original_zip_path"
+          echo "Processing zip file: $zip_file"
       
-          # Define a temporary directory for extraction
-          temp_unzip_dir="unzip_workdir"
-          mkdir -p "$temp_unzip_dir"
+          # Create temporary directories
+          unzip_dir="unzipped_temp"
+          mkdir -p "$unzip_dir"
       
-          # Unzip the original file quietly into the working directory
-          unzip -q "$original_zip_path" -d "$temp_unzip_dir"
+          echo "Unzipping artifact..."
+          unzip -q "$zip_file" -d "$unzip_dir"
       
           # Find the first directory inside the unzipped contents
-          first_dir=$(find "$temp_unzip_dir" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+          first_dir=$(find "$unzip_dir" -mindepth 1 -maxdepth 1 -type d | head -n 1)
       
           if [[ -z "$first_dir" ]]; then
-            echo "Error: No subdirectory found inside the zip file. The zip might already be in the correct format."
-            # Clean up and exit gracefully if no directory is found
-            rm -r "$temp_unzip_dir"
-            exit 0
+            echo "Error: No subdirectory found inside the zip file."
+            exit 1
           fi
       
-          echo "Found subdirectory to flatten: $first_dir"
+          echo "Found subdirectory: $first_dir"
+          echo "Moving contents to root..."
       
-          # Move all contents (including hidden files) from the subdirectory up to the root of the working directory
-          # shopt -s dotglob ensures '*' matches dotfiles (like .git)
+          # Move all contents (including hidden files) from the subdirectory to the root
+          # shopt -s dotglob allows '*' to match dotfiles (like .gitignore)
           shopt -s dotglob
-          mv "$first_dir"/* "$temp_unzip_dir/"
-          shopt -u dotglob # Disable dotglob after use
+          mv "$first_dir"/* "$unzip_dir/"
+      
+          find .
       
           # Remove the now-empty subdirectory
           rmdir "$first_dir"
+          
+          echo "Creating new zip archive..."
+          # Create the new zip file by zipping the contents of the temporary directory.
+          # We use the original zip's filename. The 'cd' command ensures the paths inside the zip are relative to the root.
+          (cd "$unzip_dir" && zip -r "../${zip_file##*/}" .)
       
-          # Define paths and filenames for clarity
-          original_zip_filename=$(basename "$original_zip_path")
-          original_zip_dir=$(dirname "$original_zip_path")
-          new_zip_path_temp="$original_zip_dir/temp_new_$original_zip_filename"
+          echo "Successfully re-zipped artifact to: $zip_file"
       
-          echo "Re-zipping contents into a temporary archive..."
-          # Create the new zip from the contents of the working directory
-          (cd "$temp_unzip_dir" && zip -qr "$new_zip_path_temp" .)
-      
-          # --- Atomic Replacement ---
-          echo "Replacing original zip with the new version."
-          # 1. Remove the original old zip file
-          rm "$original_zip_path"
-          # 2. Rename the new zip to the original's name
-          mv "$new_zip_path_temp" "$original_zip_path"
-      
-          echo "Successfully restructured and replaced: $original_zip_path"
-      
-          # Clean up the temporary working directory
-          rm -r "$temp_unzip_dir"
+          # Optional: Clean up the temporary directory
+          rm -r "$unzip_dir"
 
       - name: Save artifact with build results
         uses: actions/upload-artifact@v4
