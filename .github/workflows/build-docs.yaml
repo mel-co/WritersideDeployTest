@@ -88,9 +88,13 @@ jobs:
           # Remove the original directory
           rmdir "$FIRST_DIR"
 
-          # Repack the ZIP (overwrite original)
+          # Create a new ZIP in a temporary file
+          TEMP_ZIP=$(mktemp --suffix=.zip)
           cd "$TMP_DIR"
-          zip -r -qq "$GITHUB_WORKSPACE/$ZIP_FILE" ./*
+          zip -r -qq "$TEMP_ZIP" ./*
+
+          # Replace the original ZIP with the new flattened ZIP
+          mv "$TEMP_ZIP" "$GITHUB_WORKSPACE/$ZIP_FILE"
 
       - name: Save artifact with build results
         uses: actions/upload-artifact@v4
