@@ -8,7 +8,7 @@ on:
 env:
   INSTANCE: 'all'
   DOCKER_VERSION: '2025.04.8412'
-  IS_GROUP: 'true'  # Uncomment to build a group
+  IS_GROUP: 'a'  # Uncomment to build a group
 
 jobs:
   build:
@@ -46,6 +46,7 @@ jobs:
         uses: JetBrains/writerside-github-action@v4
         with:
           instance: ${{ env.INSTANCE }}
+          isGroup: ${{ env.IS_GROUP }}
           docker-version: ${{ env.DOCKER_VERSION }}
 
       - name: Save artifact with build results
