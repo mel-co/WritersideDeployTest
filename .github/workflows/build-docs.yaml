@@ -56,53 +56,47 @@ jobs:
 
       - name: Flatten folder structure
         run: |
-          # Find the ZIP that starts with webHelp
-          ZIP_FILE=$(find artifacts -type f -name "webHelp*.zip" | head -n 1)
-
-          if [ -z "$ZIP_FILE" ]; then
-            echo "No ZIP file found starting with webHelp"
+          # Find the first zip file in the artifacts directory
+          zip_file=$(find . -name "*.zip" | head -n 1)
+      
+          if [ -z "$zip_file" ]; then
+            echo "No zip file found in artifacts."
             exit 1
           fi
-
-          echo "Processing ZIP: $ZIP_FILE"
-
-          # Find the ZIP that starts with webHelp
-          ZIP_FILE=$(find artifacts -type f -name "webHelp*.zip" | head -n 1)
-
-          if [ -z "$ZIP_FILE" ]; then
-            echo "No ZIP file found starting with webHelp"
+      
+          echo "Processing zip file: $zip_file"
+      
+          # Create a temporary directory for unzipping
+          unzip_dir="unzipped_temp"
+          mkdir -p "$unzip_dir"
+      
+          # Unzip the file
+          unzip "$zip_file" -d "$unzip_dir"
+      
+          # Find the first directory inside the unzipped contents
+          first_dir=$(find "$unzip_dir" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+      
+          if [ -z "$first_dir" ]; then
+            echo "No directory found inside the zip file."
             exit 1
           fi
-
-          echo "Processing ZIP: $ZIP_FILE"
-
-          # Create a temporary folder for extraction
-          TMP_DIR=$(mktemp -d)
-          unzip -qq "$ZIP_FILE" -d "$TMP_DIR"
-
-          # Find the first directory inside the extracted folder
-          FIRST_DIR=$(find "$TMP_DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)
-
-          if [ -z "$FIRST_DIR" ]; then
-            echo "No directory found inside ZIP"
-            exit 1
-          fi
-
-          echo "Flattening directory: $FIRST_DIR"
-
-          # Move all contents to the root of TMP_DIR
-          mv "$FIRST_DIR"/* "$TMP_DIR"/
-          rmdir "$FIRST_DIR"
-
-          # Create a temporary ZIP
-          TEMP_ZIP=$(mktemp --suffix=.zip)
-          cd "$TMP_DIR"
-          zip -r -qq "$TEMP_ZIP" ./*
-
-          # Replace the original ZIP with the flattened one
-          mv "$TEMP_ZIP" "$GITHUB_WORKSPACE/$ZIP_FILE"
-
-          echo "Flattened ZIP overwrote original: $ZIP_FILE"
+      
+          echo "Moving contents from: $first_dir"
+      
+          # Move everything from the subdirectory to the root of the unzipped directory
+          mv "$first_dir"/* "$unzip_dir"/
+      
+          # Remove the now-empty directory
+          rmdir "$first_dir"
+      
+          # Remove the original zip file
+          rm "$zip_file"
+      
+          # Re-zip the contents, overwriting the original zip file name
+          (cd "$unzip_dir" && zip -r "../${zip_file##*/}" .)
+      
+          # Optional: Clean up the temporary directory
+          rm -r "$unzip_dir"
 
       - name: Save artifact with build results
         uses: actions/upload-artifact@v4
