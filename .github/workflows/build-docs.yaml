@@ -95,7 +95,7 @@ jobs:
           
           for dir in "$first_dir"/*/; do
               [ -d "$dir" ] || continue  # skip if not a directory
-              TARGET="$dir/$pathPart"
+              TARGET="$dir$pathPart"
               echo "Processing folder: $TARGET"
               mv "$TARGET"/* "$unzip_dir/"
 
