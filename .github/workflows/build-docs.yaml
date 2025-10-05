@@ -56,8 +56,9 @@ jobs:
 
       - name: Flatten folder structure
         run: |
+          echo "Looking for artifacts!"
+          find artifacts
           PARENT_FOLDER=$(dirname "$FOLDER_TO_FLATTEN")
-
           # Copy all contents to the parent folder
           cp -a "$FOLDER_TO_FLATTEN/." "$PARENT_FOLDER/"
 
