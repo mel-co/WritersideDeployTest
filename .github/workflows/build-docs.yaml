@@ -93,7 +93,25 @@ jobs:
           pathPart=$(basename "$first_dir")
           # Loop over all subdirectories (non-recursive)
           
-         
+          for dir in "$first_dir"/*/; do
+              [ -d "$dir" ] || continue  # skip if not a directory
+              TARGET="$dir$pathPart"
+              
+              find "$dir"
+              if [ -d "$TARGET" ]; then
+                echo "Processing folder: $TARGET"
+                mv "$TARGET"/* "$unzip_dir/"
+                if [ "$(ls -A "$TARGET")" ]; then
+                    mv "$TARGET"/* "$unzip_dir/"
+                else
+                    echo "No files to move in $TARGET"
+                fi
+                # Remove the original subfolder
+                rm -rf "$TARGET"
+              else
+                echo "Folder does not exist, skipping: $TARGET"
+              fi
+          done
           
           mv "$first_dir"/* "$unzip_dir/"
           rmdir "$first_dir"
