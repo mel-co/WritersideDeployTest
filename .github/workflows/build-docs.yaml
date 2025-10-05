@@ -101,7 +101,13 @@ jobs:
           # Create the new zip file by zipping the contents of the temporary directory.
           # We use the original zip's filename. The 'cd' command ensures the paths inside the zip are relative to the root.
           (cd "$unzip_dir" && zip -r "../${zip_file##*/}" .)
-      
+          
+          find .
+          
+          rm "/artifacts/${zip_file##*/}"
+          
+          mv "../${zip_file##*/}" "/artifacts"
+          
           echo "Successfully re-zipped artifact to: $zip_file"
       
           # Optional: Clean up the temporary directory
