@@ -16,16 +16,21 @@
         <custom-favicons>
             ArcanumSimplified.ico
         </custom-favicons>
+         <custom-css>
+             custom.css
+         </custom-css>
     </variables>
     <build-profile instance="u">
         <variables>
             <noindex-content>true</noindex-content>
         </variables>
+        <sitemap priority="0.35" change-frequency="monthly"/>
     </build-profile>
     <build-profile instance="d">
         <variables>
             <noindex-content>true</noindex-content>
         </variables>
+        <sitemap priority="0.35" change-frequency="monthly"/>
     </build-profile>
 
 </buildprofiles>
