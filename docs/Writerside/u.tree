@@ -7,4 +7,9 @@
                  start-page="user.md">
 
     <toc-element topic="user.md"/>
+    <toc-element topic="Features.md">
+        <toc-element topic="Feature-1.md"/>
+        <toc-element topic="Feature-2.md"/>
+        <toc-element topic="Feature-3.md"/>
+    </toc-element>
 </instance-profile>
