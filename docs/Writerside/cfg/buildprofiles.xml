@@ -20,7 +20,7 @@
              custom.css
          </custom-css>
          <web-root>
-             "https://mel-co.github.io/WritersideDeployTest"
+             https://mel-co.github.io/WritersideDeployTest
          </web-root>
          <showDownloadButton>
          true
