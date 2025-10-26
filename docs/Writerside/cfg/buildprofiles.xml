@@ -22,7 +22,25 @@
          <web-root>
              "https://mel-co.github.io/WritersideDeployTest"
          </web-root>
+         <showDownloadButton>
+         true
+        </showDownloadButton>
+         <download-title>
+             Get Arcanum
+         </download-title>
+         <download-page>
+             https://github.com/Minnator/Arcanum/releases
+         </download-page>
+         
     </variables>
+    <footer>
+        <social type="discord" href="https://discord.gg/9878NDb6uf">
+            Join us on Discord
+        </social>
+        <social type="github" href="https://github.com/Minnator/Arcanum">
+            Explore the files on our Github
+        </social>
+    </footer>
     <build-profile instance="u">
         <variables>
             <noindex-content>true</noindex-content>

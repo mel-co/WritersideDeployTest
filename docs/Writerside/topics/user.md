@@ -1,7 +1,5 @@
 # About User
 
-//<primary-label ref="label"/>
-
 What about this? Tst
 
 ![Alt Text](completion_procedure.png){ width="450" }
