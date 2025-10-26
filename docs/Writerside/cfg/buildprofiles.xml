@@ -19,6 +19,9 @@
          <custom-css>
              custom.css
          </custom-css>
+         <web-root>
+             "https://mel-co.github.io/WritersideDeployTest"
+         </web-root>
     </variables>
     <build-profile instance="u">
         <variables>
