@@ -1,3 +1,2 @@
 # Feature 3
-
 Start typing here...
